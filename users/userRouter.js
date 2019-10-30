@@ -36,7 +36,7 @@ router.get("/:id", validateUserId, (req, res) => {
   res.status(200).json(req.data);
 });
 
-router.get("/:id/posts", (req, res) => {});
+router.get("/:id/posts", validateUserId, (req, res) => {});
 
 router.delete("/:id", validateUserId, (req, res) => {
   Users.remove(req.data.id)
@@ -50,7 +50,20 @@ router.delete("/:id", validateUserId, (req, res) => {
     });
 });
 
-router.put("/:id", (req, res) => {});
+router.put("/:id", [validateUserId, validateUser], (req, res) => {
+  Users.update(req.data.id, req.body)
+    .then(data => {
+      res.status(200).json({
+        ...req.body,
+        id: req.data.id
+      });
+    })
+    .catch(error => {
+      res
+        .status(500)
+        .json({ error: `There was an error deleting User ${req.data.id}` });
+    });
+});
 
 // END OF ENDPOINT DEFINITION
 
@@ -74,7 +87,7 @@ function validateUserId(req, res, next) {
 
 function validateUser(req, res, next) {
   if (Object.keys(req.body).length) {
-    if (req.body.hasOwnProperty("name")) {
+    if (req.body.name) {
       next();
     } else {
       res.status(400).json({ message: "missing required name field" });
