@@ -35,7 +35,17 @@ router.delete("/:id", validatePostId, (req, res) => {
     });
 });
 
-router.put("/:id", (req, res) => {});
+router.put("/:id", [validatePostId, validatePost], (req, res) => {
+  Posts.update(req.data.id, req.body)
+    .then(data => {
+      res.status(200).json({ message: `Post ${req.data.id} has been edited` });
+    })
+    .catch(error => {
+      res
+        .status(400)
+        .json({ message: `Post ${req.data.id} could not be edited` });
+    });
+});
 
 // END OF ENDPOINTS
 
@@ -55,6 +65,18 @@ function validatePostId(req, res, next) {
     .catch(error => {
       res.status(400).json({ message: `Error message: ${error.message}` });
     });
+}
+
+function validatePost(req, res, next) {
+  if (Object.keys(req.body).length) {
+    if (req.body.text || req.body.user_id) {
+      next();
+    } else {
+      res.status(400).json({ message: "missing required text/user_id field" });
+    }
+  } else {
+    res.status(400).json({ message: "missing post data" });
+  }
 }
 
 module.exports = router;
