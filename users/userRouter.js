@@ -37,7 +37,19 @@ router.get("/:id", validateUserId, (req, res) => {
   res.status(200).json(req.data);
 });
 
-router.get("/:id/posts", validateUserId, (req, res) => {});
+router.get("/:id/posts", validateUserId, (req, res) => {
+  Users.getUserPosts(req.data.id)
+    .then(data => {
+      res.status(200).json(data);
+    })
+    .catch(error => {
+      res
+        .status(500)
+        .json({
+          message: `There was an error fetching the posts to this User: ${error.message}`
+        });
+    });
+});
 
 router.delete("/:id", validateUserId, (req, res) => {
   Users.remove(req.data.id)
