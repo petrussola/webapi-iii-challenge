@@ -1,6 +1,5 @@
 const express = require("express");
 const Users = require("./userDb");
-const Posts = require("../posts/postDb");
 
 // ROUTER FUNCTIONALITY FROM EXPRESS
 const router = express.Router();
