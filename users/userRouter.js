@@ -38,7 +38,17 @@ router.get("/:id", validateUserId, (req, res) => {
 
 router.get("/:id/posts", (req, res) => {});
 
-router.delete("/:id", (req, res) => {});
+router.delete("/:id", validateUserId, (req, res) => {
+  Users.remove(req.data.id)
+    .then(data => {
+      res
+        .status(200)
+        .json({ message: `User ${req.data.id} has been succesfully deleted` });
+    })
+    .catch(error => {
+      console.log(error);
+    });
+});
 
 router.put("/:id", (req, res) => {});
 
@@ -58,7 +68,7 @@ function validateUserId(req, res, next) {
       }
     })
     .catch(error => {
-      console.log(data);
+      res.status(400).json({ message: `Error message: ${error}` });
     });
 }
 
