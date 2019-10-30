@@ -19,7 +19,22 @@ router.post("/", validateUser, (req, res) => {
     });
 });
 
-router.post("/:id/posts", (req, res) => {});
+router.post("/:id/posts", validateUserId, (req, res) => {
+  Posts.insert({
+    ...req.body,
+    user_id: req.data.id
+  })
+    .then(data => {
+      res.status(200).json(data);
+    })
+    .catch(error => {
+      res
+        .status(500)
+        .json({
+          message: `There was a problem posting post to user ${req.data.id}`
+        });
+    });
+});
 
 router.get("/", (req, res) => {
   Users.get()
@@ -43,11 +58,9 @@ router.get("/:id/posts", validateUserId, (req, res) => {
       res.status(200).json(data);
     })
     .catch(error => {
-      res
-        .status(500)
-        .json({
-          message: `There was an error fetching the posts to this User: ${error.message}`
-        });
+      res.status(500).json({
+        message: `There was an error fetching the posts to this User: ${error.message}`
+      });
     });
 });
 
