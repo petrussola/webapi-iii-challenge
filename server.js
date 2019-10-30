@@ -9,6 +9,7 @@ const server = express();
 server.use(helmet());
 server.use(cors());
 server.use(express.json());
+server.use(logger);
 
 // USERS ROUTER
 
@@ -22,6 +23,9 @@ server.get("/", (req, res) => {
 
 //custom middleware
 
-function logger(req, res, next) {}
+function logger(req, res, next) {
+  console.log(`${req.method} ${req.url} ${new Date}`);
+  next();
+}
 
 module.exports = server;
